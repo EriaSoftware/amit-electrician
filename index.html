@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amit Electrician Services - 3D Portfolio | Pune</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Three.js for 3D graphics -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --color-bg: #0d1a26; /* Deep Navy Blue */
+            --color-primary: #00bfff; /* Electric Blue */
+            --color-secondary: #ff4500; /* Vibrant Orange-Red */
+            --color-text: #e0e0e0;
+            --color-glass: rgba(17, 24, 39, 0.5); /* Dark blue glass */
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+        }
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .content-section {
+            position: relative;
+            z-index: 1;
+            padding: 100px 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .glass-panel {
+             background: var(--color-glass);
+             backdrop-filter: blur(12px);
+             -webkit-backdrop-filter: blur(12px);
+             border-radius: 20px;
+             border: 1px solid rgba(0, 191, 255, 0.2);
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--color-primary); 
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .section-title {
+            color: var(--color-primary);
+        }
+        .cta-button {
+             background-color: var(--color-secondary);
+             color: #ffffff;
+             transition: background-color 0.3s, transform 0.2s;
+        }
+        .cta-button:hover {
+            background-color: #e63e00;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Canvas for Three.js Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Header Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50 p-4">
+        <nav class="container mx-auto flex justify-between items-center glass-panel p-4">
+            <a href="#hero" class="text-2xl font-bold text-white">Amit <span class="text-[var(--color-primary)]">Electrician</span></a>
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-6 text-lg">
+                <a href="#about" class="hover:text-[var(--color-primary)] transition-colors">About</a>
+                <a href="#services" class="hover:text-[var(--color-primary)] transition-colors">Services</a>
+                <a href="#products" class="hover:text-[var(--color-primary)] transition-colors">Products</a>
+                <a href="#safety-advisor" class="hover:text-[var(--color-primary)] transition-colors">AI Advisor</a>
+                <a href="#contact" class="hover:text-[var(--color-primary)] transition-colors">Contact</a>
+            </div>
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden fixed inset-0 bg-[var(--color-bg)] bg-opacity-95 z-50 flex flex-col items-center justify-center text-2xl space-y-8">
+        <button id="close-mobile-menu" class="absolute top-8 right-8 text-white text-4xl">&times;</button>
+        <a href="#about" class="mobile-menu-link">About</a>
+        <a href="#services" class="mobile-menu-link">Services</a>
+        <a href="#products" class="mobile-menu-link">Products</a>
+        <a href="#safety-advisor" class="mobile-menu-link">AI Advisor</a>
+        <a href="#contact" class="mobile-menu-link">Contact</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="h-screen flex items-center justify-center text-center flex-col content-section">
+        <h1 class="text-4xl sm:text-5xl md:text-7xl font-black text-white uppercase tracking-wider">
+            <span class="text-[var(--color-primary)]">नमस्ते!</span> I'm Amit
+        </h1>
+        <p class="mt-4 text-lg md:text-2xl text-gray-300">आपका विश्वसनीय इलेक्ट्रीशियन (Your Trusted Electrician) in Pune</p>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="content-section min-h-screen">
+        <div class="glass-panel p-6 md:p-12">
+            <h2 class="text-4xl font-bold text-center mb-8 section-title">About Me</h2>
+            <p class="text-lg leading-relaxed max-w-3xl mx-auto text-center">
+                For over 15 years, I have been proudly serving the homes and businesses of Pune. As your local neighborhood electrician, I understand the unique needs of our community. My goal isn't just to fix a problem, but to provide a safe, reliable, and long-lasting solution with a personal touch. I am fully licensed and insured, specializing in everything from small household repairs to large-scale commercial projects. I believe in honest work, fair pricing, and building lasting relationships with my clients. When you call me, you're not just getting an electrician; you're getting a neighbor you can trust.
+            </p>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="content-section min-h-screen">
+        <div class="glass-panel p-6 md:p-12">
+            <h2 class="text-4xl font-bold text-center mb-12 section-title">My Services</h2>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <!-- Service Card 1 -->
+                <div class="p-8 bg-black/20 rounded-lg border border-transparent hover:border-[var(--color-primary)] transition-all duration-300">
+                    <div class="flex justify-center mb-4">
+                        <svg class="w-12 h-12 text-[var(--color-primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m-3-1l-3-1m-3 1l-3 1m-3-1l3-1m6 0l3 1m-3-1l-3-1m-3 1l3 1m-3-1l-3 1" /></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">Residential</h3>
+                    <p>Complete wiring, MCB setup, inverter installation, and all household fault finding.</p>
+                </div>
+                <!-- Service Card 2 -->
+                <div class="p-8 bg-black/20 rounded-lg border border-transparent hover:border-[var(--color-primary)] transition-all duration-300">
+                    <div class="flex justify-center mb-4">
+                        <svg class="w-12 h-12 text-[var(--color-primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h6.375M9 12h6.375m-6.375 5.25h6.375M5.25 6.75h.008v.008H5.25V6.75zm.008 5.25h.008v.008H5.25v-.008zm0 5.25h.008v.008H5.25v-.008z" /></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">Commercial</h3>
+                    <p>Solutions for offices and shops, including lighting, power systems, and maintenance contracts.</p>
+                </div>
+                <!-- Service Card 3 -->
+                <div class="p-8 bg-black/20 rounded-lg border border-transparent hover:border-[var(--color-primary)] transition-all duration-300">
+                     <div class="flex justify-center mb-4">
+                        <svg class="w-12 h-12 text-[var(--color-primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.572L16.5 21.75l-.398-1.178a3.375 3.375 0 00-2.455-2.456L12.75 18l1.178-.398a3.375 3.375 0 002.455-2.456L16.5 14.25l.398 1.178a3.375 3.375 0 002.456 2.456L20.25 18l-1.178.398a3.375 3.375 0 00-2.456 2.456z" /></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">Specialized</h3>
+                    <p>Smart home automation, CCTV installation, outdoor lighting, and emergency call-outs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Products Section -->
+    <section id="products" class="content-section min-h-screen">
+        <div class="glass-panel p-6 md:p-12">
+            <h2 class="text-4xl font-bold text-center mb-12 section-title">Recommended Products</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product Card Template -->
+                <div class="bg-black/20 rounded-lg p-4 text-center transition-transform hover:scale-105 flex flex-col">
+                    <img src="https://media.croma.com/image/upload/v1685968134/Croma%20Assets/Large%20Appliances/Fans/Images/256425_0_v3l3zu.png" alt="Ceiling Fan" class="w-full h-40 object-contain rounded-md mb-4 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/300x300/1a1a1a/eab308?text=Fan';">
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-white">Ceiling Fans</h3>
+                        <p class="text-sm text-gray-400">High-speed fans from Crompton, Havells.</p>
+                    </div>
+                </div>
+                <div class="bg-black/20 rounded-lg p-4 text-center transition-transform hover:scale-105 flex flex-col">
+                    <img src="https://5.imimg.com/data5/SELLER/Default/2023/2/ML/SO/AQ/10398829/havells-smart-switch-500x500.jpg" alt="Smart Switch" class="w-full h-40 object-contain rounded-md mb-4 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/300x300/1a1a1a/eab308?text=Switch';">
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-white">Smart Switches</h3>
+                        <p class="text-sm text-gray-400">Automate your home with smart controls.</p>
+                    </div>
+                </div>
+                <div class="bg-black/20 rounded-lg p-4 text-center transition-transform hover:scale-105 flex flex-col">
+                    <img src="https://5.imimg.com/data5/SELLER/Default/2021/12/UP/TA/KF/4222538/havells-mcb-switch-500x500.jpg" alt="Circuit Breaker" class="w-full h-40 object-contain rounded-md mb-4 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/300x300/1a1a1a/eab308?text=MCB';">
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-white">Circuit Breakers</h3>
+                        <p class="text-sm text-gray-400">Ensure safety with reliable MCBs.</p>
+                    </div>
+                </div>
+                <div class="bg-black/20 rounded-lg p-4 text-center transition-transform hover:scale-105 flex flex-col">
+                     <img src="https://5.imimg.com/data5/ANDROID/Default/2022/11/ZH/CR/OE/2179888/product-jpeg-500x500.jpg" alt="Copper Wire" class="w-full h-40 object-contain rounded-md mb-4 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/300x300/1a1a1a/eab308?text=Wire';">
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-white">Copper Wiring</h3>
+                        <p class="text-sm text-gray-400">Polycab & Finolex fire-retardant wires.</p>
+                    </div>
+                </div>
+                <div class="bg-black/20 rounded-lg p-4 text-center transition-transform hover:scale-105 flex flex-col">
+                    <img src="https://images.pexels.com/photos/8099341/pexels-photo-8099341.jpeg?auto=compress&cs=tinysrgb&w=600" alt="LED Bulb" class="w-full h-40 object-contain rounded-md mb-4 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/300x300/1a1a1a/eab308?text=Bulb';">
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-white">LED Bulbs</h3>
+                        <p class="text-sm text-gray-400">Save energy with Philips & Syska LEDs.</p>
+                    </div>
+                </div>
+                <div class="bg-black/20 rounded-lg p-4 text-center transition-transform hover:scale-105 flex flex-col">
+                     <img src="https://www.bigbyte.com.np/wp-content/uploads/2022/04/Luminous-Inverter-1100-PRO-with-150Ah-Tubular-Battery-Combo.jpg" alt="Inverter & Battery" class="w-full h-40 object-contain rounded-md mb-4 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/300x300/1a1a1a/eab308?text=Inverter';">
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-white">Inverter & Battery</h3>
+                        <p class="text-sm text-gray-400">Luminous & Exide for power backup.</p>
+                    </div>
+                </div>
+                <div class="bg-black/20 rounded-lg p-4 text-center transition-transform hover:scale-105 flex flex-col">
+                     <img src="https://media.croma.com/image/upload/v1664419572/Croma%20Assets/Large%20Appliances/Water%20Heater%20and%20Geyser/Images/232490_htgcyr.png" alt="Geyser" class="w-full h-40 object-contain rounded-md mb-4 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/300x300/1a1a1a/eab308?text=Geyser';">
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-white">Water Heaters</h3>
+                        <p class="text-sm text-gray-400">Instant and storage geysers.</p>
+                    </div>
+                </div>
+                <div class="bg-black/20 rounded-lg p-4 text-center transition-transform hover:scale-105 flex flex-col">
+                     <img src="https://m.media-amazon.com/images/I/51wX4i-iKHL._SL1500_.jpg" alt="Modular Switches" class="w-full h-40 object-contain rounded-md mb-4 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/300x300/1a1a1a/eab308?text=Sockets';">
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-white">Modular Sockets</h3>
+                        <p class="text-sm text-gray-400">Stylish switches from Anchor, Legrand.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Safety Advisor Section -->
+    <section id="safety-advisor" class="content-section min-h-screen">
+       <div class="glass-panel p-6 md:p-12 max-w-3xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-4 section-title">AI Electrical Safety Advisor</h2>
+            <p class="text-center text-gray-300 mb-8">Have an electrical concern? Describe it below in English or Hindi for AI-powered safety advice. <br><strong class="text-[var(--color-secondary)]">Note: This is not a substitute for professional help.</strong></p>
+            <div class="space-y-6">
+                <div>
+                    <label for="issue-description" class="block text-sm font-medium mb-2">Describe your issue:</label>
+                    <textarea id="issue-description" rows="4" class="mt-1 block w-full bg-black/30 border-[var(--color-primary)]/50 rounded-md p-3 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]" placeholder="E.g., 'My kitchen lights are flickering' or 'मेरा स्विच बोर्ड गरम हो रहा है'"></textarea>
+                </div>
+                <div class="text-center">
+                    <button id="get-advice-btn" class="cta-button font-bold py-3 px-8 rounded-lg flex items-center justify-center mx-auto">
+                        <span class="mr-2">⚡</span> Get AI Safety Advice
+                    </button>
+                </div>
+                <div id="ai-response-container" class="mt-8 p-6 bg-black/20 rounded-lg border border-[var(--color-primary)]/30 min-h-[100px] hidden">
+                    <div id="ai-response-loader" class="flex justify-center items-center">
+                        <div class="spinner"></div>
+                    </div>
+                    <p id="ai-response-text" class="text-white whitespace-pre-wrap"></p>
+                </div>
+            </div>
+       </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="content-section min-h-screen">
+       <div class="glass-panel p-6 md:p-12 max-w-2xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-8 section-title">Contact Me</h2>
+            <div class="text-center text-lg mb-8 space-y-2">
+                <p><strong>Phone:</strong> <a href="tel:+919876543210" class="hover:text-[var(--color-primary)]">+91 98765 43210</a></p>
+                <p><strong>Address:</strong> 123, Laxmi Road, Sadashiv Peth, Pune, Maharashtra 411030</p>
+            </div>
+            <h3 class="text-2xl font-bold text-center mb-8 text-white">Or Send a Message</h3>
+            <form class="space-y-6">
+                <div>
+                    <label for="name" class="block text-sm font-medium">Name</label>
+                    <input type="text" id="name" class="mt-1 block w-full bg-black/30 border-[var(--color-primary)]/50 rounded-md p-3 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium">Email</label>
+                    <input type="email" id="email" class="mt-1 block w-full bg-black/30 border-[var(--color-primary)]/50 rounded-md p-3 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]">
+                </div>
+                <div>
+                    <label for="message" class="block text-sm font-medium">Message</label>
+                    <textarea id="message" rows="4" class="mt-1 block w-full bg-black/30 border-[var(--color-primary)]/50 rounded-md p-3 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="cta-button font-bold py-3 px-8 rounded-lg">
+                        Send Message
+                    </button>
+                </div>
+            </form>
+       </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="text-center p-8 relative z-10">
+        <p>&copy; 2024 Amit Electrician Services | Proudly serving Pune, Maharashtra.</p>
+    </footer>
+
+    <script>
+        // --- Mobile Menu Logic ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+        const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+        });
+        closeMobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // --- Gemini API Integration ---
+        const getAdviceBtn = document.getElementById('get-advice-btn');
+        const issueDescription = document.getElementById('issue-description');
+        const responseContainer = document.getElementById('ai-response-container');
+        const responseLoader = document.getElementById('ai-response-loader');
+        const responseText = document.getElementById('ai-response-text');
+
+        getAdviceBtn.addEventListener('click', async () => {
+            const userIssue = issueDescription.value;
+            if (!userIssue.trim()) {
+                alert('Please describe your electrical issue.');
+                return;
+            }
+
+            responseContainer.classList.remove('hidden');
+            responseLoader.style.display = 'flex';
+            responseText.textContent = '';
+            getAdviceBtn.disabled = true;
+
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const prompt = `You are an expert electrician's AI assistant named 'Sparky' with 20 years of experience, based in India. Your primary goal is to provide helpful and, above all, extremely safe advice regarding electrical issues. A user has described a problem: '${userIssue}'.
+
+            Your task is:
+            1.  Acknowledge the user's problem in a calm, professional, and slightly informal "Indian" tone (e.g., 'Okay, I understand the problem you're facing...').
+            2.  Provide immediate, clear, and actionable safety precautions they MUST take (e.g., 'Sabse pehle, us switch ko use karna band kar dijiye' or 'First of all, please stop using that switch immediately.').
+            3.  Explain the possible causes of the problem in simple, easy-to-understand English.
+            4.  **Crucially, you MUST include a strong, clear disclaimer in its own paragraph, stating that this advice is for informational purposes only and that they absolutely should NOT attempt to diagnose or fix the issue themselves due to the serious risks of electric shock and fire. This is very important.**
+            5.  End by strongly recommending they hire a qualified, licensed electrician like Amit in Pune for a professional and safe diagnosis and repair. Frame this as the smartest and safest next step.`;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API call failed with status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    responseText.textContent = text;
+                } else {
+                    responseText.textContent = 'Sorry, I could not generate a response. Please try again or contact Amit directly.';
+                    console.error('Unexpected API response structure:', result);
+                }
+
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                responseText.textContent = 'There was an error processing your request. Please check your connection or contact us directly for help.';
+            } finally {
+                responseLoader.style.display = 'none';
+                getAdviceBtn.disabled = false;
+            }
+        });
+
+        // --- Three.js Scene Setup ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById('bg-canvas'),
+            alpha: true
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const newColors = {
+            primary: 0x00bfff,
+            secondary: 0xff4500
+        };
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(-1, 1, 1);
+        scene.add(directionalLight);
+        const pointLight = new THREE.PointLight(newColors.primary, 1.5, 100);
+        pointLight.position.set(0, 0, 2);
+        scene.add(pointLight);
+
+        const electricalGroup = new THREE.Group();
+        scene.add(electricalGroup);
+
+        function createLightbulb() {
+            const group = new THREE.Group();
+            const bulbMaterial = new THREE.MeshStandardMaterial({ color: 0xffffeb, emissive: 0x333333, metalness: 0.1, roughness: 0.2, transparent: true, opacity: 0.8 });
+            const bulbGeom = new THREE.SphereGeometry(0.5, 32, 32);
+            const bulb = new THREE.Mesh(bulbGeom, bulbMaterial);
+            const baseMaterial = new THREE.MeshStandardMaterial({ color: 0x808080, metalness: 0.9, roughness: 0.4 });
+            const baseGeom = new THREE.CylinderGeometry(0.2, 0.2, 0.3, 16);
+            const base = new THREE.Mesh(baseGeom, baseMaterial);
+            base.position.y = -0.6;
+            group.add(bulb);
+            group.add(base);
+            return group;
+        }
+
+        function createSwitch() {
+            const group = new THREE.Group();
+            const caseMaterial = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, metalness: 0.2, roughness: 0.8 });
+            const caseGeom = new THREE.BoxGeometry(1, 1.5, 0.3);
+            const switchCase = new THREE.Mesh(caseGeom, caseMaterial);
+            const toggleMaterial = new THREE.MeshStandardMaterial({ color: newColors.secondary, metalness: 0.1, roughness: 0.9 });
+            const toggleGeom = new THREE.BoxGeometry(0.3, 0.6, 0.2);
+            const toggle = new THREE.Mesh(toggleGeom, toggleMaterial);
+            toggle.position.z = 0.15;
+            group.add(switchCase);
+            group.add(toggle);
+            return group;
+        }
+
+        function createWire() {
+            const curve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-2, Math.random() * 2 - 1, Math.random() * 2 - 1),
+                new THREE.Vector3(-1, Math.random() * 2 - 1, Math.random() * 2 - 1),
+                new THREE.Vector3(0, Math.random() * 2 - 1, Math.random() * 2 - 1),
+                new THREE.Vector3(1, Math.random() * 2 - 1, Math.random() * 2 - 1),
+                new THREE.Vector3(2, Math.random() * 2 - 1, Math.random() * 2 - 1)
+            ]);
+            const geometry = new THREE.TubeGeometry(curve, 20, 0.05, 8, false);
+            const material = new THREE.MeshStandardMaterial({ color: newColors.primary, roughness: 0.6 });
+            return new THREE.Mesh(geometry, material);
+        }
+
+        const objects = [];
+        const objectTypes = [createLightbulb, createSwitch, createWire];
+
+        for (let i = 0; i < 25; i++) {
+            const typeIndex = Math.floor(Math.random() * objectTypes.length);
+            const object = objectTypes[typeIndex]();
+            object.position.x = (Math.random() - 0.5) * 25;
+            object.position.y = (Math.random() - 0.5) * 25;
+            object.position.z = (Math.random() - 0.5) * 25;
+            object.rotation.x = Math.random() * 2 * Math.PI;
+            object.rotation.y = Math.random() * 2 * Math.PI;
+            object.rotation.z = Math.random() * 2 * Math.PI;
+            const scale = Math.random() * 0.5 + 0.5;
+            object.scale.set(scale, scale, scale);
+            electricalGroup.add(object);
+            objects.push(object);
+        }
+        
+        camera.position.z = 15;
+
+        let mouseX = 0;
+        let mouseY = 0;
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        const clock = new THREE.Clock();
+        function animate() {
+            const elapsedTime = clock.getElapsedTime();
+            requestAnimationFrame(animate);
+            electricalGroup.rotation.y = elapsedTime * 0.05;
+            electricalGroup.rotation.x = elapsedTime * 0.03;
+            
+            camera.position.x += (mouseX * 4 - camera.position.x) * 0.05;
+            camera.position.y += (mouseY * 4 - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
